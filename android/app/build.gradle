@@ -64,4 +64,8 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies{
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.69'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.5'
+
+}

@@ -3,7 +3,7 @@ import 'package:qr_code_crypt/screen/information.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class QrCodeDisplay extends StatelessWidget {
-  final Information info;
+  final String info;
   final String encryptionKey;
   const QrCodeDisplay(this.info, this.encryptionKey);
 
@@ -20,8 +20,8 @@ class QrCodeDisplay extends StatelessWidget {
         children: [
           Center(
             child: QrImageView(
-              data:
-                  "${info.name.toString()},${info.dob.toString()},${info.gender.toString()},${info.phoneNo.toString()}",
+              data: info,
+              // "${info.name.toString()},${info.dob.toString()},${info.gender.toString()},${info.phoneNo.toString()}",
               version: QrVersions.auto,
               // embeddedImage: AssetImage('images/profile.png'),
               size: 200.0,

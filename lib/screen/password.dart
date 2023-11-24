@@ -1,12 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_code_crypt/screen/information.dart';
 import 'package:qr_code_crypt/screen/qrcodedisplay.dart';
 
 class PasswordScreen extends StatelessWidget {
   final Information info;
-  PasswordScreen(this.info);
+  PasswordScreen(this.info, {super.key});
   final passwordController = TextEditingController();
+  static const platform = MethodChannel('com.example.qr_code_crypt/crypto');
+
+  Future<String> encryptData() async {
+    try {
+      final result = await platform.invokeMethod('encrypt',
+          {"userText": info.toString(), "userPass": passwordController.text});
+      return result;
+    } on PlatformException catch (e) {
+      return "Error : $e";
+    }
+  }
+
+  onClickedEvent(context, info, password) {
+    encryptData().then((value) => Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => QrCodeDisplay(value, password))));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,11 +104,6 @@ class PasswordScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-onClickedEvent(context, info, password) {
-  Navigator.push(context,
-      MaterialPageRoute(builder: (context) => QrCodeDisplay(info, password)));
 }
 
 Row dynamicRow(label, value) {
