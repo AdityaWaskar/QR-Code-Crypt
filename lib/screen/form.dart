@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_code_crypt/screen/information.dart';
 import 'package:qr_code_crypt/screen/password.dart';
@@ -34,7 +35,8 @@ class _FormScreenState extends State<FormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Identity Card"), // * Header name
+        title: Text("Identity Card",
+            style: GoogleFonts.sourceCodePro()), // * Header name
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -105,12 +107,12 @@ class _FormScreenState extends State<FormScreen> {
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: Colors.grey)),
+                        border: Border.all(color: Colors.black)),
                     width: 400,
                     // * Dropdown button which shows three options - Male, Female and Others
                     child: DropdownButton(
                       style: const TextStyle(color: Colors.black),
-                      iconEnabledColor: Colors.grey, // * down icon color
+                      iconEnabledColor: Colors.black, // * down icon color
                       iconSize: 36,
                       isExpanded: true, //* gets the field widht full size
                       items: dropdownItems,
@@ -197,15 +199,15 @@ InkWell button(_formKey, name, formField, nameController, dobController,
             phoneNo: phoneController.text);
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => PasswordScreen(info)));
-        print("(" +
-            nameController.text +
-            ", " +
-            dobController.text +
-            ", " +
-            selectGender +
-            ", " +
-            phoneController.text +
-            " )");
+        // print("(" +
+        //     nameController.text +
+        //     ", " +
+        //     dobController.text +
+        //     ", " +
+        //     selectGender +
+        //     ", " +
+        //     phoneController.text +
+        //     " )");
       } else {
         print("data is Invalid");
         // channel.invokeMethod("print");
@@ -214,13 +216,13 @@ InkWell button(_formKey, name, formField, nameController, dobController,
     child: Container(
       height: 50,
       decoration: BoxDecoration(
-        color: Colors.indigo,
+        color: Colors.blue,
         borderRadius: BorderRadius.circular(5),
       ),
-      child: const Center(
+      child: Center(
           child: Text(
         "Generate QR Code",
-        style: TextStyle(
+        style: GoogleFonts.sourceCodePro(
             color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
       )),
     ),
@@ -233,7 +235,7 @@ List<DropdownMenuItem<String>> get dropdownItems {
     DropdownMenuItem(
       child: Row(
         children: const [
-          Icon(Icons.male, size: 25, color: Color.fromARGB(255, 132, 131, 131)),
+          Icon(Icons.male, size: 25, color: Colors.black),
           SizedBox(width: 12),
           Text("Male", style: TextStyle(fontSize: 16))
         ],
@@ -243,8 +245,7 @@ List<DropdownMenuItem<String>> get dropdownItems {
     DropdownMenuItem(
       child: Row(
         children: const [
-          Icon(Icons.female,
-              size: 25, color: Color.fromARGB(255, 132, 131, 131)),
+          Icon(Icons.female, size: 25, color: Colors.black),
           SizedBox(width: 12),
           Text("Female", style: TextStyle(fontSize: 16))
         ],
@@ -254,8 +255,7 @@ List<DropdownMenuItem<String>> get dropdownItems {
     DropdownMenuItem(
       child: Row(
         children: const [
-          Icon(Icons.transgender,
-              size: 25, color: Color.fromARGB(255, 132, 131, 131)),
+          Icon(Icons.transgender, size: 25, color: Colors.black),
           SizedBox(width: 12),
           Text("Other", style: TextStyle(fontSize: 16))
         ],
