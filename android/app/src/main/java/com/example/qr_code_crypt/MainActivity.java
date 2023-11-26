@@ -1,5 +1,4 @@
-package com.example.qr_code_crypt; 
- 
+package com.example.qr_code_crypt;
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
@@ -41,8 +40,8 @@ public class MainActivity extends FlutterActivity {
                 .setMethodCallHandler(
                         (call, result) -> {
                             if (call.method.equals("encrypt")) {
-                                String plainText = call.argument("plainText");
-                                String password = call.argument("password");
+                                String plainText = call.argument("userText");
+                                String password = call.argument("userPass");
                                 // Handle encryption with digital signature method call
                                 try { 
                                     //* Encrypting the given Data
@@ -65,7 +64,7 @@ public class MainActivity extends FlutterActivity {
                                     e.printStackTrace();
                                 }
                                 String cipherText = (String) resultMap.get("cipherText");
-                                byte[] keyBytes = Base64.decode((String) resultMap.get("keyBytes"));
+                                byte[] salt = Base64.decode((String) resultMap.get("salt"));
                                 byte[] nonceBytes = Base64.decode((String) resultMap.get("noncebytes"));
                                 byte[] publicKeyBytes = Base64.decode((String) resultMap.get("pubicKey")) ;
                                 byte[] signatureBytes = Base64.decode((String) resultMap.get("signature"));
@@ -75,7 +74,7 @@ public class MainActivity extends FlutterActivity {
                                     boolean isVerify = verifySignature(cipherText, publicKeyBytes, signatureBytes); 
                                     if(isVerify){
                                         //* decrypting the data
-                                        String decryptedText = decrypt(cipherText, keyBytes, nonceBytes);
+                                        String decryptedText = decrypt(cipherText, salt, nonceBytes, password);
                                         print(development, "crypto", "Decryted Text : "+ decryptedText);
                                         result.success(decryptedText);
                                     }else{
@@ -100,7 +99,8 @@ public class MainActivity extends FlutterActivity {
 
     // Encrypt the plaintext
     private String encrypt(String plainText, String password) throws Exception {
-        byte[] keyBytes = deriveKeyFromPassword(password);
+        byte[] salt = generateSalt();
+        byte[] keyBytes = deriveKeyFromPassword(password,salt);
         byte[] nonceBytes = generateNonce();
 
         ChaCha7539Engine cipher = new ChaCha7539Engine();
@@ -123,7 +123,7 @@ public class MainActivity extends FlutterActivity {
 
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("cipherText", Base64.toBase64String(resultBytes));
-        resultMap.put("keyBytes", Base64.toBase64String(keyBytes));
+        resultMap.put("salt", Base64.toBase64String(salt));
         resultMap.put("noncebytes", Base64.toBase64String(nonceBytes));
         resultMap.put("pubicKey", Base64.toBase64String(keyPair.getPublic().getEncoded()));
     
@@ -134,8 +134,8 @@ public class MainActivity extends FlutterActivity {
     }
 
     // Decrypt the ciphertext
-    private String decrypt(String cipherText, byte[] keyBytes, byte[] nonceBytes) throws Exception {
-         
+    private String decrypt(String cipherText, byte[] slat, byte[] nonceBytes, String password) throws Exception {
+        byte[] keyBytes = deriveKeyFromPassword(password, slat);
         byte[] inputBytes = Base64.decode(cipherText);
         byte[] cipherBytes = new byte[inputBytes.length - NONCE_LENGTH];
 
@@ -153,9 +153,9 @@ public class MainActivity extends FlutterActivity {
     }
 
     // Derive key from password
-    private byte[] deriveKeyFromPassword(String password) {
+    private byte[] deriveKeyFromPassword(String password, byte[] salt) {
         PKCS5S2ParametersGenerator generator = new PKCS5S2ParametersGenerator();
-        generator.init(password.getBytes(StandardCharsets.UTF_8), generateSalt(), ITERATION_COUNT);
+        generator.init(password.getBytes(StandardCharsets.UTF_8), salt, ITERATION_COUNT);
         return ((KeyParameter) generator.generateDerivedParameters(KEY_LENGTH_BITS)).getKey();
     }
 

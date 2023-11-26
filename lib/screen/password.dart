@@ -13,7 +13,7 @@ class PasswordScreen extends StatelessWidget {
   Future<String> encryptData() async {
     try {
       final result = await platform.invokeMethod('encrypt',
-          {"plainText": info.toString(), "password": passwordController.text});
+          {"userText": info.toString(), "userPass": passwordController.text});
       return result;
     } on PlatformException catch (e) {
       return "Error : $e";
